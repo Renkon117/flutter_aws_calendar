@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_aws_calendar/model/schedule.dart';
+import 'package:flutter_aws_calendar/models/Schedule.dart';
+import 'package:flutter_aws_calendar/repository/schedule_repository.dart';
 import 'package:intl/intl.dart';
 
 class CalendarView extends StatefulWidget {
@@ -45,27 +46,7 @@ class _CalendarViewState extends State<CalendarView> {
 
   bool isSettingStartTime = false;
 
-  Map<DateTime, List<Schedule>> scheduleMap = {
-    DateTime(2024, 4, 11): [
-      Schedule(
-        title: '買い出し',
-        startAt: DateTime(2024, 4, 11, 10),
-        endAt: DateTime(2024, 4, 11, 12),
-      ),
-      Schedule(
-        title: '宿題をする',
-        startAt: DateTime(2024, 4, 11, 15),
-        endAt: DateTime(2024, 4, 11, 17),
-      ),
-    ],
-    DateTime(2024, 4, 12): [
-      Schedule(
-        title: '買い出し',
-        startAt: DateTime(2024, 4, 12, 10),
-        endAt: DateTime(2024, 4, 12, 12),
-      ),
-    ]
-  };
+  Map<DateTime, List<Schedule>> scheduleMap = {};
 
   void selectDate(DateTime cacheDate) {
     selectedDate = cacheDate;
@@ -166,7 +147,7 @@ class _CalendarViewState extends State<CalendarView> {
                   ),
                 ),
                 IconButton(
-                    onPressed: () {
+                    onPressed: () async {
                       // スケジュールを追加する処理
                       if (!validationIsOk()) {
                         return;
@@ -180,14 +161,12 @@ class _CalendarViewState extends State<CalendarView> {
 
                       Schedule newSchedule = Schedule(
                           title: titleController.text,
-                          startAt: selectedStartTime!,
-                          endAt: selectedEndTime!);
+                          startAt: DateFormat('yyyy-MM-dd HH:mm')
+                              .format(selectedStartTime!),
+                          endAt: DateFormat('yyyy-MM-dd HH:mm')
+                              .format(selectedEndTime!));
 
-                      if (scheduleMap.containsKey(checkScheduleTime)) {
-                        scheduleMap[checkScheduleTime]!.add(newSchedule);
-                      } else {
-                        scheduleMap[checkScheduleTime] = [newSchedule];
-                      }
+                      await ScheduleRepository.insertSchedule(newSchedule);
 
                       selectedEndTime = null;
                       Navigator.pop(context, true);
@@ -495,29 +474,29 @@ class _CalendarViewState extends State<CalendarView> {
 
   Future<void> editSchedule(
       {required int index, required Schedule selectedSchedule}) async {
-    selectedStartTime = selectedSchedule.startAt;
-    selectedEndTime = selectedSchedule.endAt;
-
-    titleController.text = selectedSchedule.title;
-    final result = await showDialog(
-        context: context,
-        builder: (context) {
-          return buildAddScheduleDialog();
-        });
-    if (result == true) {
-      scheduleMap[DateTime(selectedSchedule.startAt.year,
-              selectedSchedule.startAt.month, selectedSchedule.startAt.day)]!
-          .removeAt(index);
-    }
+    // selectedStartTime = selectedSchedule.startAt;
+    // selectedEndTime = selectedSchedule.endAt;
+    //
+    // titleController.text = selectedSchedule.title;
+    // final result = await showDialog(
+    //     context: context,
+    //     builder: (context) {
+    //       return buildAddScheduleDialog();
+    //     });
+    // if (result == true) {
+    //   scheduleMap[DateTime(selectedSchedule.startAt.year,
+    //           selectedSchedule.startAt.month, selectedSchedule.startAt.day)]!
+    //       .removeAt(index);
+    // }
     setState(() {});
   }
 
   void deleteSchedule(
       {required int index, required Schedule selectedSchedule}) {
-    scheduleMap[DateTime(
-        selectedSchedule.startAt.year,
-        selectedSchedule.startAt.month,
-        selectedSchedule.startAt.day)]!.removeAt(index);
+    // scheduleMap[DateTime(
+    //     selectedSchedule.startAt.year,
+    //     selectedSchedule.startAt.month,
+    //     selectedSchedule.startAt.day)]!.removeAt(index);
     setState(() {});
   }
 
