@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   intl: any
   amplify_flutter: ^1.7.0
+  amplify_api: ^1.7.0
 
 dev_dependencies:
   flutter_test:

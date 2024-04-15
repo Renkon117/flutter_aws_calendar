@@ -1,11 +1,23 @@
+import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_aws_calendar/amplifyconfiguration.dart';
+import 'package:flutter_aws_calendar/models/ModelProvider.dart';
 import 'package:flutter_aws_calendar/pages/calendar.dart';
+Future<void> _configureAmplify() async {
+  final api = AmplifyAPI(modelProvider: ModelProvider.instance);
+  await Amplify.addPlugin(api);
+
+  try {
+    await Amplify.configure(amplifyconfig);
+  } on Exception catch (e) {
+    print('Amplify Configureエラー');
+  }
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Amplify.configure(amplifyconfig);
+  await _configureAmplify();
   runApp(const MyApp());
 }
 
