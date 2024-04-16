@@ -20,4 +20,33 @@ class ScheduleRepository {
       print('Mutation failed: $e');
     }
   }
+
+  static Future<List<Schedule?>> fetchScheduleList() async {
+    try {
+      final request = ModelQueries.list(Schedule.classType);
+      final response = await Amplify.API.mutate(request: request).response;
+
+      final schedules = response.data?.items;
+      if (schedules == null) {
+        print('errors: ${response.errors}');
+        return <Schedule?>[];
+      }
+      return schedules;
+    } on ApiException catch (e) {
+      print('Query failed: $e');
+    }
+    return <Schedule?>[];
+  }
+
+  static Future<void> updateSchedule(Schedule updatedSchedule) async {
+    final request = ModelMutations.update(updatedSchedule);
+    final response = await Amplify.API.mutate(request: request).response;
+    safePrint('Response: $response');
+  }
+
+  static Future<void> deleteSchedule(Schedule scheduleToDelete) async {
+    final request = ModelMutations.delete(scheduleToDelete);
+    final response = await Amplify.API.mutate(request: request).response;
+    safePrint('Response: $response');
+  }
 }

@@ -23,6 +23,7 @@ class _CalendarViewState extends State<CalendarView> {
 
   DateTime? selectedStartTime;
   DateTime? selectedEndTime;
+  Schedule? updateTargetSchedule;
 
   late List<int> yearOption;
   late List<int> monthOption = List.generate(12, (index) => index + 1);
@@ -53,9 +54,28 @@ class _CalendarViewState extends State<CalendarView> {
     setState(() {});
   }
 
+  Future<void> fetchScheduleList() async {
+    List<Schedule?> scheduleList = await ScheduleRepository.fetchScheduleList();
+    print(scheduleList);
+
+    scheduleMap = {};
+    for (var schedule in scheduleList) {
+      DateTime startAt = DateTime.parse(schedule!.startAt);
+      DateTime checkStartTime =
+          DateTime(startAt.year, startAt.month, startAt.day);
+      if (scheduleMap.containsKey(checkStartTime)) {
+        scheduleMap[checkStartTime]!.add(schedule);
+      } else {
+        scheduleMap[checkStartTime] = [schedule];
+      }
+    }
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
+    fetchScheduleList();
 
     yearOption = [now.year, now.year + 1];
     selectedDate = now;
@@ -124,7 +144,7 @@ class _CalendarViewState extends State<CalendarView> {
     );
   }
 
-  Widget buildAddScheduleDialog() {
+  Widget buildAddScheduleDialog({bool isNew = true}) {
     return StatefulBuilder(builder: (context, setState) {
       return SimpleDialog(
         titlePadding: EdgeInsets.zero,
@@ -153,20 +173,29 @@ class _CalendarViewState extends State<CalendarView> {
                         return;
                       }
 
-                      DateTime checkScheduleTime = DateTime(
-                        selectedStartTime!.year,
-                        selectedStartTime!.month,
-                        selectedStartTime!.day,
-                      );
+                      if (isNew) {
+                        Schedule newSchedule = Schedule(
+                            title: titleController.text,
+                            startAt: DateFormat('yyyy-MM-dd HH:mm')
+                                .format(selectedStartTime!),
+                            endAt: DateFormat('yyyy-MM-dd HH:mm')
+                                .format(selectedEndTime!));
 
-                      Schedule newSchedule = Schedule(
+                        await ScheduleRepository.insertSchedule(newSchedule);
+                      } else {
+                        Schedule updatedSchedule =
+                            updateTargetSchedule!.copyWith(
                           title: titleController.text,
                           startAt: DateFormat('yyyy-MM-dd HH:mm')
                               .format(selectedStartTime!),
                           endAt: DateFormat('yyyy-MM-dd HH:mm')
-                              .format(selectedEndTime!));
+                              .format(selectedEndTime!),
+                        );
+                        await ScheduleRepository.updateSchedule(
+                            updatedSchedule);
+                      }
 
-                      await ScheduleRepository.insertSchedule(newSchedule);
+                      fetchScheduleList();
 
                       selectedEndTime = null;
                       Navigator.pop(context, true);
@@ -474,30 +503,22 @@ class _CalendarViewState extends State<CalendarView> {
 
   Future<void> editSchedule(
       {required int index, required Schedule selectedSchedule}) async {
-    // selectedStartTime = selectedSchedule.startAt;
-    // selectedEndTime = selectedSchedule.endAt;
-    //
-    // titleController.text = selectedSchedule.title;
-    // final result = await showDialog(
-    //     context: context,
-    //     builder: (context) {
-    //       return buildAddScheduleDialog();
-    //     });
-    // if (result == true) {
-    //   scheduleMap[DateTime(selectedSchedule.startAt.year,
-    //           selectedSchedule.startAt.month, selectedSchedule.startAt.day)]!
-    //       .removeAt(index);
-    // }
-    setState(() {});
+    updateTargetSchedule = selectedSchedule;
+    selectedStartTime = DateTime.parse(selectedSchedule.startAt);
+    selectedEndTime = DateTime.parse(selectedSchedule.endAt);
+
+    titleController.text = selectedSchedule.title;
+    await showDialog(
+        context: context,
+        builder: (context) {
+          return buildAddScheduleDialog(isNew: false);
+        });
   }
 
-  void deleteSchedule(
-      {required int index, required Schedule selectedSchedule}) {
-    // scheduleMap[DateTime(
-    //     selectedSchedule.startAt.year,
-    //     selectedSchedule.startAt.month,
-    //     selectedSchedule.startAt.day)]!.removeAt(index);
-    setState(() {});
+  Future<void> deleteSchedule(
+      {required int index, required Schedule selectedSchedule}) async {
+    await ScheduleRepository.deleteSchedule(selectedSchedule);
+    fetchScheduleList();
   }
 
   Widget createCalendarItem() {
