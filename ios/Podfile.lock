@@ -1,19 +1,30 @@
 PODS:
   - amplify_secure_storage (0.0.1):
     - Flutter
+  - connectivity_plus (0.0.1):
+    - Flutter
+    - ReachabilitySwift
   - Flutter (1.0.0)
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+  - ReachabilitySwift (5.2.1)
 
 DEPENDENCIES:
   - amplify_secure_storage (from `.symlinks/plugins/amplify_secure_storage/ios`)
+  - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - Flutter (from `Flutter`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+
+SPEC REPOS:
+  trunk:
+    - ReachabilitySwift
 
 EXTERNAL SOURCES:
   amplify_secure_storage:
     :path: ".symlinks/plugins/amplify_secure_storage/ios"
+  connectivity_plus:
+    :path: ".symlinks/plugins/connectivity_plus/ios"
   Flutter:
     :path: Flutter
   path_provider_foundation:
@@ -21,8 +32,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   amplify_secure_storage: 501cbdac671a050090d48dfcc002d5637d3f4a55
+  connectivity_plus: bf0076dd84a130856aa636df1c71ccaff908fa1d
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
+  ReachabilitySwift: 5ae15e16814b5f9ef568963fb2c87aeb49158c66
 
 PODFILE CHECKSUM: a57f30d18f102dd3ce366b1d62a55ecbef2158e5
 
