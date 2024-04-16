@@ -1,16 +1,42 @@
 # flutter_aws_calendar
 
-A new Flutter project.
+ソースコード
 
-## Getting Started
+# amplifyconfiguration.dartの生成
+amplify configureを事項した際にamplifyconfiguration.dartファイルが生成されますので、各環境で作成してください。
 
-This project is a starting point for a Flutter application.
+# レクチャー動画の補足（2024年4月16日現在）
 
-A few resources to get you started if this is your first Flutter project:
+## 開発環境　Flutter 3.13.6
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### section3のlecture1 4分45秒
+    amplifyセットアップのドキュメントURL 
+        https://docs.amplify.aws/flutter/start/project-setup/prerequisites/
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+	amplifyのバージョンはnpm install -g @aws-amplify/cliでインストール
+
+	Android:
+		app/src/build.gradle内で
+            compileSdkVersion flutter.compileSdkVersionを34に変更
+            minSdkVersion 21を21ではなく23に変更
+		
+	iOS:
+		ios platform :13に変更する
+
+
+section3のlecture2
+GraphSQLのURL
+https://docs.amplify.aws/flutter/build-a-backend/graphqlapi/
+
+
+section3の24
+fetchDataのURL
+https://docs.amplify.aws/flutter/build-a-backend/graphqlapi/query-data/
+
+section3の25
+create, update, deleteのURL
+https://docs.amplify.aws/flutter/build-a-backend/graphqlapi/mutate-data/
+
+
+
